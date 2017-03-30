@@ -854,6 +854,7 @@ enable_directfb_shared
 enable_video_kmsdrm
 enable_kmsdrm_shared
 enable_video_dummy
+enable_video_dreambox
 enable_video_opengl
 enable_video_opengles
 enable_video_opengles1
@@ -1608,6 +1609,7 @@ Optional Features:
   --enable-video-kmsdrm   use KMSDRM video driver [[default=no]]
   --enable-kmsdrm-shared  dynamically load kmsdrm support [[default=yes]]
   --enable-video-dummy    use dummy video driver [[default=yes]]
+  --enable-video-dreambox use dreambox video driver [[default=yes]]
   --enable-video-opengl   include OpenGL support [[default=yes]]
   --enable-video-opengles include OpenGL ES support [[default=yes]]
   --enable-video-opengles1
@@ -21293,6 +21295,18 @@ $as_echo "#define SDL_VIDEO_DRIVER_HAIKU 1" >>confdefs.h
     fi
 }
 
+CheckDreamboxVideo()
+{
+    # Check whether --enable-video-dreambox was given.
+    if test x$enable_video = xyes; then
+        $as_echo "#define SDL_VIDEO_DRIVER_DREAMBOX 1" >>confdefs.h
+
+        SOURCES="$SOURCES $srcdir/src/video/dreambox/*.c"
+        have_video=yes
+        SUMMARY_video="${SUMMARY_video} dreambox"
+    fi
+}
+
 CheckCOCOA()
 {
     # Check whether --enable-video-cocoa was given.
@@ -24082,6 +24096,7 @@ case "$host" in
         CheckVisibilityHidden
         CheckDeclarationAfterStatement
         CheckDummyVideo
+        CheckDreamboxVideo
         CheckDiskAudio
         CheckDummyAudio
         CheckDLOPEN

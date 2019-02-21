@@ -291,7 +291,7 @@ SDL_EVDEV_Poll(void)
                     fprintf(stderr,"DREAM: EV_KEY=%d SDL_Key=%d is_dreamremote=%d (%s)\n", events[i].code, scan_code, item->is_dreamremote, item->path);
 #endif
                     /* unsafe exit can cause Segmentation fault if app does not have SDL_QUIT implemented! */
-                    if ((events[i].code == KEY_TV) && (events[i].value == 1)) {
+                    if (( (events[i].code == KEY_TV) || events[i].code == KEY_POWER) && (events[i].value == 1)) {
 #if DREAMBOX_DEBUG
                         fprintf(stderr,"DREAM: send SDL_Quit\n");
 #endif

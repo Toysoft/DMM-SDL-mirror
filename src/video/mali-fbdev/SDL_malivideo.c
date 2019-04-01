@@ -41,6 +41,10 @@
 static int
 MALI_Available(void)
 {
+    int fd = open("/dev/mali0", O_RDONLY);
+	if (fd < 0)
+        return 0;
+    close(fd);
     return 1;
 }
 
@@ -114,51 +118,61 @@ VideoBootStrap MALI_bootstrap = {
 /*****************************************************************************/
 
 int
+mali_set_framebuffer_resolution(int width, int height)
+{
+	int fd;
+	struct fb_var_screeninfo vinfo;
+
+	fd = open("/dev/fb0", O_RDWR, 0);
+	if (fd<0) {
+		SDL_SetError("MALI: Open Framebuffer failed!");
+		return -1;
+	}
+
+	if (ioctl(fd, FBIOGET_VSCREENINFO, &vinfo) == 0) {
+		vinfo.xres = width;
+		vinfo.yres = height;
+		vinfo.xres_virtual = width;
+		vinfo.yres_virtual = height * 3;
+		vinfo.bits_per_pixel = 32;
+		vinfo.activate = FB_ACTIVATE_ALL;
+		ioctl(fd, FBIOPUT_VSCREENINFO, &vinfo);
+#if DREAMBOX_DEBUG
+		fprintf(stderr, "MALI: Set Framebuffer Resolution: %dx%d\n", width, height);
+#endif
+	} else {
+		SDL_SetError("MALI: Open Framebuffer ioctl failed!");
+		return -1;
+	}
+	close(fd);
+	return 0;
+}
+
+int
 MALI_VideoInit(_THIS)
 {
     SDL_VideoDisplay display;
     SDL_DisplayMode current_mode;
     SDL_DisplayData *data;
-    struct fb_var_screeninfo vinfo;
-    int fd;
 
     data = (SDL_DisplayData *) SDL_calloc(1, sizeof(SDL_DisplayData));
     if (data == NULL) {
         return SDL_OutOfMemory();
     }
 
-    fd = open("/dev/fb0", O_RDWR, 0);
-    if (fd < 0) {
-        return SDL_SetError("mali-fbdev: Could not open framebuffer device");
-    }
-
-    if (ioctl(fd, FBIOGET_VSCREENINFO, &vinfo) < 0) {
-        MALI_VideoQuit(_this);
-        return SDL_SetError("mali-fbdev: Could not get framebuffer information");
-    }
-    /* Enable triple buffering */
-    /*
-    vinfo.yres_virtual = vinfo.yres * 3;
-    if (ioctl(fd, FBIOPUT_VSCREENINFO, vinfo) == -1) {
-	printf("mali-fbdev: Error setting VSCREENINFO\n");
-    }
-    */
-    close(fd);
-    system("setterm -cursor off");
-
-    data->native_display.width = vinfo.xres;
-    data->native_display.height = vinfo.yres;
-
     SDL_zero(current_mode);
-    current_mode.w = vinfo.xres;
-    current_mode.h = vinfo.yres;
+    current_mode.w = 1920;
+    current_mode.h = 1080;
     /* FIXME: Is there a way to tell the actual refresh rate? */
     current_mode.refresh_rate = 60;
     /* 32 bpp for default */
     //current_mode.format = SDL_PIXELFORMAT_ABGR8888;
     current_mode.format = SDL_PIXELFORMAT_RGBX8888;
-
     current_mode.driverdata = NULL;
+    mali_set_framebuffer_resolution(current_mode.w, current_mode.h);
+
+    data->native_display.width = current_mode.w;
+    data->native_display.height = current_mode.h;
 
     SDL_zero(display);
     display.desktop_mode = current_mode;
@@ -184,7 +198,6 @@ MALI_VideoQuit(_THIS)
     ioctl(fd, VT_ACTIVATE, 5);
     ioctl(fd, VT_ACTIVATE, 1);
     close(fd);
-    system("setterm -cursor on");
 
 #ifdef SDL_INPUT_LINUXEV
     SDL_EVDEV_Quit();

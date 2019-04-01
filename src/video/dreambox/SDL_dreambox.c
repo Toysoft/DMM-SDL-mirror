@@ -186,7 +186,7 @@ VideoBootStrap DREAM_bootstrap = {
 
 	"dreambox",
 	"Dreambox EGL Video Driver",
-	
+
 	DREAM_Available,
 	DREAM_Create
 };

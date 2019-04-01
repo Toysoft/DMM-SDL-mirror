@@ -61,7 +61,7 @@ DREAM_EGL_LoadLibrary(_THIS, const char *path) {
 	EGLNativeDisplayType *nativeDisplay=NULL;
 	nativeDisplay = (EGLNativeDisplayType)0L;
 	
-	return SDL_EGL_LoadLibrary(_this, path, nativeDisplay);
+	return SDL_EGL_LoadLibrary(_this, path, nativeDisplay, 0);
 }
 
 SDL_GLContext

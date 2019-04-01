@@ -151,8 +151,8 @@ DREAM_Create()
 	device->VideoQuit = DREAM_VideoQuit;
 	device->GetDisplayModes = DREAM_GetDisplayModes;
 	device->SetDisplayMode = DREAM_SetDisplayMode;
-	device->CreateWindow = DREAM_CreateWindow;
-	device->CreateWindowFrom = DREAM_CreateWindowFrom;
+	device->CreateSDLWindow = DREAM_CreateWindow;
+	device->CreateSDLWindowFrom = DREAM_CreateWindowFrom;
 	device->SetWindowTitle = DREAM_SetWindowTitle;
 	device->SetWindowIcon = DREAM_SetWindowIcon;
 	device->SetWindowPosition = DREAM_SetWindowPosition;

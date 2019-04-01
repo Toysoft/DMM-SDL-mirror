@@ -51,7 +51,8 @@
 #define DEFAULT_OGL_ES_PVR ( vc4 ? "libGLES_CM.so.1" : "libbrcmGLESv2.so" )
 #define DEFAULT_OGL_ES ( vc4 ? "libGLESv1_CM.so.1" : "libbrcmGLESv2.so" )
 
-#elif SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_MALI || SDL_VIDEO_DRIVER_VIVANTE
+#elif SDL_VIDEO_DRIVER_ANDROID || SDL_VIDEO_DRIVER_MALI || SDL_VIDEO_DRIVER_VIVANTE || SDL_VIDEO_DRIVER_DREAMBOX
+
 /* Android */
 #define DEFAULT_EGL "libEGL.so"
 #define DEFAULT_OGL_ES2 "libGLESv2.so"
@@ -91,6 +92,10 @@ if (!_this->egl_data->NAME) \
 { \
     return SDL_SetError("Could not retrieve EGL function " #NAME); \
 }
+#endif
+
+#ifndef DREAMBOX_DEBUG
+#define DREAMBOX_DEBUG 1
 #endif
 
 static const char * SDL_EGL_GetErrorName(EGLint eglErrorCode)
@@ -301,8 +306,14 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
 
     if (egl_dll_handle == NULL) {
         if (_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES) {
+#if DREAMBOX_DEBUG
+            fprintf(stderr, "DREAM: gl_config.profile_mask: SDL_GL_CONTEXT_PROFILE_ES\n");
+#endif
             if (_this->gl_config.major_version > 1) {
                 path = DEFAULT_OGL_ES2;
+#if DREAMBOX_DEBUG
+                fprintf(stderr, "DREAM: SDL_EGL_LoadLibrary: %s\n",path);
+#endif
                 egl_dll_handle = SDL_LoadObject(path);
 #ifdef ALT_OGL_ES2
                 if (egl_dll_handle == NULL && !vc4) {
@@ -313,9 +324,15 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
 
             } else {
                 path = DEFAULT_OGL_ES;
+#if DREAMBOX_DEBUG
+                fprintf(stderr, "DREAM: SDL_EGL_LoadLibrary: %s\n",path);
+#endif
                 egl_dll_handle = SDL_LoadObject(path);
                 if (egl_dll_handle == NULL) {
                     path = DEFAULT_OGL_ES_PVR;
+#if DREAMBOX_DEBUG
+                    fprintf(stderr, "DREAM: SDL_EGL_LoadLibrary: %s\n",path);
+#endif
                     egl_dll_handle = SDL_LoadObject(path);
                 }
 #ifdef ALT_OGL_ES2
@@ -352,6 +369,9 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
         if (path == NULL) {
             path = DEFAULT_EGL;
         }
+#if DREAMBOX_DEBUG
+        fprintf(stderr, "DREAM: SDL_EGL_LoadLibrary: %s\n",path);
+#endif
         dll_handle = SDL_LoadObject(path);
 
 #ifdef ALT_EGL

@@ -2082,7 +2082,7 @@ CheckDreamboxVideo()
 {
     # Check whether --enable-video-dreambox was given.
     AC_ARG_ENABLE(video-dreambox,
-	AC_HELP_STRING([--enable-video-dreambox], [use dreambox video driver [[default=no]]]),
+	AC_HELP_STRING([--enable-video-dreambox], [use dreambox video driver [[default=yes]]]),
                   , enable_video_dreambox=no)
     if test x$enable_video = xyes -a x$enable_video_dreambox = xyes; then
 	AC_DEFINE(SDL_VIDEO_DRIVER_DREAMBOX, 1, [ ])

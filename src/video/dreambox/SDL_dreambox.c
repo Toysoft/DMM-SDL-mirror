@@ -87,6 +87,7 @@ DREAM_Available(void)
 
 	if ( (SDL_strncmp(name, "dm820", 5) == 0) || 
 		(SDL_strncmp(name, "dm900", 5) == 0) || 
+		(SDL_strncmp(name, "dm920", 5) == 0) ||
 		(SDL_strncmp(name, "dm7080", 6) == 0) ) {
 		
 #if DREAMBOX_DEBUG

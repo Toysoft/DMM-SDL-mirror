@@ -309,8 +309,15 @@ MALI_HideWindow(_THIS, SDL_Window * window)
 SDL_bool
 MALI_GetWindowWMInfo(_THIS, SDL_Window * window, struct SDL_SysWMinfo *info)
 {
-    if (info->version.major <= SDL_MAJOR_VERSION) {
+    if (info->version.major == SDL_MAJOR_VERSION &&
+        info->version.minor == SDL_MINOR_VERSION) {
+        SDL_WindowData *windowdata = (SDL_WindowData *) window->driverdata;
+        SDL_DisplayData *displaydata = SDL_GetDisplayDriverData(0);
+        info->subsystem = SDL_SYSWM_MALI;
+        info->info.mali.display = &displaydata->native_display;
+        info->info.mali.window = &displaydata->native_display;
         return SDL_TRUE;
+
     } else {
         SDL_SetError("application not compiled with SDL %d.%d\n",
             SDL_MAJOR_VERSION, SDL_MINOR_VERSION);

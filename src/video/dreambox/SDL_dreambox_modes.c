@@ -35,6 +35,8 @@
 #define DREAMBOX_DEBUG 1
 #endif
 
+int
+DREAM_SetVideoMode(_THIS, SDL_VideoDisplay * display, const char * vmode);
 
 /* Display helper functions */
 void

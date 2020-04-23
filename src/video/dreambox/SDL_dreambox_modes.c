@@ -107,7 +107,7 @@ dreambox_set_videomode(const char * vmode)
 #endif
 	
 	if (fp) {
-		fprintf(fp, vmode);
+		fprintf(fp, "%s", vmode);
 		fclose(fp);
 	}
 	else

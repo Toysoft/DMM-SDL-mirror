@@ -317,7 +317,7 @@ SDL_EVDEV_Poll(void)
                     if (item->is_dreamremote > 0) {}
                     
 #if DREAMBOX_DEBUG
-                    fprintf(stderr,"DREAM: EV_KEY=%d SDL_Key=%d is_dreamremote=%d (%s)\n", events[i].code, scan_code, item->is_dreamremote, item->path);
+                    fprintf(stderr,"DREAM: EV_KEY=%d is_dreamremote=%d (%s)\n", events[i].code, item->is_dreamremote, item->path);
 #endif
 #endif /* SDL_VIDEO_DRIVER_DREAMBOX */
                     switch(events[i].code) {

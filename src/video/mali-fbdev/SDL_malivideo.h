@@ -35,6 +35,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
 typedef struct SDL_DisplayData
 {

@@ -209,6 +209,7 @@ dreambox_get_displaymode_from_videomode(const char * vmode, SDL_DisplayMode * mo
 			return 1;
 		}
 	}
+    return 0;
 }
 
 int 

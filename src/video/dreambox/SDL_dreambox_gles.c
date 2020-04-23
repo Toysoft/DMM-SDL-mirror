@@ -458,7 +458,6 @@ DREAM_EGL_SwapWindow(_THIS, SDL_Window * window)
 {
 	SDL_VideoData *phdata = (SDL_VideoData *) _this->driverdata;
 	SDL_WindowData *wdata = (SDL_WindowData *) window->driverdata;
-	EGLBoolean status;
 	
 	if (phdata->egl_initialized != SDL_TRUE) {
 		return SDL_SetError("DREAM: GLES initialization failed, no OpenGL ES support");

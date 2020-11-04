@@ -36,7 +36,7 @@
 
 #include "SDL_malivideo.h"
 #include "SDL_maliopengles.h"
-
+#include "osd.h"
 
 static int
 MALI_Available(void)
@@ -120,8 +120,11 @@ VideoBootStrap MALI_bootstrap = {
 int
 mali_set_framebuffer_resolution(int width, int height)
 {
-	int fd;
-	struct fb_var_screeninfo vinfo;
+    int fd;
+    int modeFd;
+    struct fb_var_screeninfo vinfo;
+    __u32 src_rect[4] = { 0, 0, width - 1, height - 1 };
+    __u32 dst_rect[4] = { 0, 0, width - 1, height - 1 };
 
 	fd = open("/dev/fb0", O_RDWR, 0);
 	if (fd<0) {
@@ -140,6 +143,28 @@ mali_set_framebuffer_resolution(int width, int height)
 #if DREAMBOX_DEBUG
 		fprintf(stderr, "MALI: Set Framebuffer Resolution: %dx%d\n", width, height);
 #endif
+        //set video mode on amlogic
+        modeFd = open("/sys/class/display/mode", O_WRONLY);
+        if (modeFd > 0) {
+            write(modeFd, "720p50", strlen("720p50"));
+            close(modeFd);
+        } else {
+            fprintf(stderr, "MALI: could not set video output mode");
+        }
+        if (ioctl(fd, FBIOPUT_OSD_FREE_SCALE_ENABLE, 0) < 0)
+            fprintf(stderr, "MALI: FBIOPUT_OSD_FREE_SCALE_ENABLE");
+        if (ioctl(fd, FBIOPUT_OSD_FREE_SCALE_MODE, 1) < 0)
+            fprintf(stderr, "MALI: FBIOPUT_OSD_FREE_SCALE_MODE");
+
+        if (ioctl(fd, FBIOPUT_OSD_FREE_SCALE_AXIS, src_rect) < 0)
+            fprintf(stderr, "MALI: FBIOPUT_OSD_FREE_SCALE_AXIS");
+
+        if (ioctl(fd, FBIOPUT_OSD_WINDOW_AXIS, dst_rect) < 0)
+            fprintf(stderr, "MALI: FBIOPUT_OSD_WINDOW_AXIS");
+
+        if (ioctl(fd, FBIOPUT_OSD_FREE_SCALE_ENABLE, 0x10001) < 0)
+            fprintf(stderr, "MALI: FBIOPUT_OSD_FREE_SCALE_ENABLE");
+
 	} else {
 		SDL_SetError("MALI: Open Framebuffer ioctl failed!");
 		return -1;
@@ -161,10 +186,10 @@ MALI_VideoInit(_THIS)
     }
 
     SDL_zero(current_mode);
-    current_mode.w = 1920;
-    current_mode.h = 1080;
+    current_mode.w = 1280;
+    current_mode.h = 720;
     /* FIXME: Is there a way to tell the actual refresh rate? */
-    current_mode.refresh_rate = 60;
+    current_mode.refresh_rate = 50;
     /* 32 bpp for default */
     //current_mode.format = SDL_PIXELFORMAT_ABGR8888;
     current_mode.format = SDL_PIXELFORMAT_RGBX8888;
